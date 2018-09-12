@@ -58,3 +58,11 @@ def load_yaml_config(filename):
     with open(filename, 'r') as file:
         return yaml.load(file)
 
+def create_folder(fileName):
+    """Utility function to create folder for output"""
+    absolute_dirname = os.path.dirname(fileName)
+    last_element = os.path.basename(absolute_dirname)
+    if '.' in last_element: # not a folder
+        absolute_dirname = os.path.dirname(absolute_dirname)
+    if not os.path.exists(absolute_dirname):
+        os.makedirs(absolute_dirname)
