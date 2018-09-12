@@ -8,7 +8,7 @@ from shutil import copy2
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import Activation, Dropout, Flatten, Dense
+from keras.layers import Activation, Dropout, Flatten, Dense, BatchNormalization
 from keras import backend as K
 
 
@@ -70,6 +70,8 @@ def train_from_scratch(input_folder, output_folder, classmap):
                   optimizer='adam',
                   metrics=['accuracy'])
 
+    model.summary()
+
     # this is the augmentation configuration we will use for training
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
@@ -85,13 +87,13 @@ def train_from_scratch(input_folder, output_folder, classmap):
         train_data_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
-        class_mode='binary')
+        class_mode='categorical')
 
     validation_generator = test_datagen.flow_from_directory(
         validation_data_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
-        class_mode='binary')
+        class_mode='categorical')
 
     model.fit_generator(
         train_generator,
@@ -100,7 +102,7 @@ def train_from_scratch(input_folder, output_folder, classmap):
         validation_data=validation_generator,
         validation_steps=nb_validation_samples // batch_size)
 
-    model.save_weights('first_try.h5')
+    model.save_weights(os.path.join(output_folder, 'first_try.h5'))
 
     return True
 
